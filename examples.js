@@ -25,8 +25,14 @@ function x_over_ln_x(x) {
 	return x / Math.log(x);
 }
 
+function polynomial(x) {
+	return x*x*x*x + (2*x+2) * (2*x+2);
+}
+
 test(xsquared, 3, function(x) { return 2*x; });
 test(xcubed, 4, function(x) { return 3*x*x; });
 test(e_xsquared, 2, function(x) { return 2*x*Math.exp(x*x); });
 test(e_sin_x2, Math.PI/2, function(x) { return 2*x*Math.exp(Math.sin(x*x))*Math.cos(x*x); });
 test(x_over_ln_x, 5, function(x) { return (Math.log(x) - 1) / (Math.log(x) * Math.log(x)); });
+test(polynomial, 7, function(x) { return 4*x*x*x + 8*x + 8; });
+

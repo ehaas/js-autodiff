@@ -152,10 +152,9 @@ function diff(f, at) {
 	var context = vm.createContext({
 		AD: AD,
 		at: Dual(at, 1),
-		// Dual: Dual,
+		Dual: Dual,
 		console: console,
 	});
-	// vm.runInContext(generated, context);
 	vm.runInContext('result = ('+generated+')(at)', context);
 	return context.result.b;
 }
