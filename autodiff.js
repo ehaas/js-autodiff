@@ -44,6 +44,26 @@ var AD = {
 	div: function(x0, x1) {
 		return Dual(x0.a / x1.a, (x1.a * x0.b - x0.a * x1.b) / (x1.a * x1.a));
 	},
+	addAssign: function(x0, x1) {
+		var sum = AD.add(x0, x1);
+		x0.a = sum.a;
+		x0.b = sum.b;
+	},
+	subAssign: function(x0, x1) {
+		var diff = AD.sub(x0, x1);
+		x0.a = diff.a;
+		x0.b = diff.b;
+	},
+	mulAssign: function(x0, x1) {
+		var prod = AD.mul(x0, x1);
+		x0.a = prod.a;
+		x0.b = prod.b;
+	},
+	divAssign: function(x0, x1) {
+		var quot = AD.div(x0, x1);
+		x0.a = quot.a;
+		x0.b = quot.b;
+	},
 	sqrt: function(x) {
 		return Dual(Math.sqrt(x.a), x.b * 0.5 / Math.sqrt(x.a));
 	},
@@ -112,6 +132,12 @@ function transform(ast) {
 		'--': 'decr',
 		'++': 'incr'
 	};
+	var assignOpMap = {
+		'+': 'addAssign',
+		'-': 'subAssign',
+		'*': 'mulAssign',
+		'/': 'divAssign'
+	};
 	return w.with_walkers({
 		'num': function(num) {
 			return ['call', ['name', 'Dual'], [['num', num]]];
@@ -134,6 +160,12 @@ function transform(ast) {
 			}
 	    return [ this[0], op, walk(left), walk(right) ];
 		},
+    'assign': function(op, lvalue, rvalue) {
+			if (assignOpMap[op]) {
+				return ['call', ['dot', ['name', 'AD'], assignOpMap[op]], [walk(lvalue), walk(rvalue)]];
+			}
+			return [ this[0], op, walk(lvalue), walk(rvalue) ];
+    },
 		'name': function(name) {
 			if (name === 'Math') {
 				return [this[0], 'AD'];
